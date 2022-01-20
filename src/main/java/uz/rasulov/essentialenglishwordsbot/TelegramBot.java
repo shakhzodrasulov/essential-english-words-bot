@@ -4,11 +4,10 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
-import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
-import uz.rasulov.essentialenglishwordsbot.commands.MainCommandsController;
-import uz.rasulov.essentialenglishwordsbot.services.CommandsService;
+
+import static uz.rasulov.essentialenglishwordsbot.Constants.start;
 
 /**
  * Created by SHR on 07.01.2022
@@ -16,7 +15,10 @@ import uz.rasulov.essentialenglishwordsbot.services.CommandsService;
 @Component
 public class TelegramBot extends TelegramLongPollingBot {
     private CommandsService commandsService;
-    private MainCommandsController commands;
+    private CommonService commonService;
+    private CommandsController commandsController;
+
+    private MessageDto message;
 
     @Value("${bot-username}")
     private String botUserName;
@@ -24,9 +26,10 @@ public class TelegramBot extends TelegramLongPollingBot {
     @Value("${bot-token}")
     private String botToken;
 
-    public TelegramBot(CommandsService commandsService, MainCommandsController commands) {
+    public TelegramBot(CommandsService commandsService, CommonService commonService, CommandsController commandsController) {
         this.commandsService = commandsService;
-        this.commands = commands;
+        this.commonService = commonService;
+        this.commandsController = commandsController;
     }
 
     //methods
@@ -42,17 +45,36 @@ public class TelegramBot extends TelegramLongPollingBot {
 
     @Override
     public void onUpdateReceived(Update update) {
-        if (update.hasMessage() && update.getMessage().hasText()) {
-            Message receivedMessage = update.getMessage();
 
-            //starts here
-            receivedMessage = commandsService.correctNotStandardCommands(receivedMessage);
+        if (update.hasMessage() && update.getMessage().hasText() || update.hasCallbackQuery()) {
+            String text;
+            long chatId;
+
+            if (update.hasCallbackQuery()){
+                text = update.getCallbackQuery().getData();
+                chatId = update.getCallbackQuery().getMessage().getChatId();
+            } else {
+                text = update.getMessage().getText();
+                chatId = update.getMessage().getChatId();
+            }
+            message = MessageDto.builder()
+                    .text(text)
+                    .chatId(chatId)
+                    .build();
 
             SendMessage answer;
-            if (commandsService.isCommand(receivedMessage)) {
-                answer = commands.mainCommandsController(receivedMessage);
+
+            //starts here
+            if (!start && !message.getText().equals("/welcome")) {
+                answer = commonService.welcomeMessage(message);
             } else {
-                answer = commandsService.notCommand(receivedMessage);
+                message = commandsService.correctNotStandardCommands(message);
+
+                if (commandsService.isCommand(message)) {
+                    answer = commandsController.mainCommandsController(message);
+                } else {
+                    answer = commandsService.notCommand(message);
+                }
             }
 
             sendAnswer(answer);

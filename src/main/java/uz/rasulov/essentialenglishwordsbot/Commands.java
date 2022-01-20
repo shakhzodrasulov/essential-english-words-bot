@@ -9,6 +9,7 @@ public class Commands {
     public static Map<String, String> commands = Map.of(
             "/test_yourself","Test yourself "+Emojiz.MUSCLE.getValue(),
             "/learn_new_words","Learn new words "+Emojiz.BOOK.getValue(),
-            "/back", Emojiz.ARROW_LEFT.getValue()+"Back"
+            "/back", Emojiz.ARROW_LEFT.getValue()+"Back",
+            "/start", "Start Learning English! "+Emojiz.ENGLAND.getValue()
     );
 }

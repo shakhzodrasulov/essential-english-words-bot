@@ -1,4 +1,4 @@
-package uz.rasulov.essentialenglishwordsbot.services;
+package uz.rasulov.essentialenglishwordsbot;
 
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
@@ -12,28 +12,27 @@ import static uz.rasulov.essentialenglishwordsbot.Keyboards.backReplyKeyboardMar
  */
 @Service
 public class CommandsService {
-    public boolean isCommand(Message message) {
-        return  (message.getText().startsWith("/"));
+    public boolean isCommand(MessageDto messageDto) {
+        return  (messageDto.getText().startsWith("/"));
     }
 
 
-    public SendMessage notCommand(Message receivedMessage) {
+    public SendMessage notCommand(MessageDto messageDto) {
         return SendMessage.builder()
                 .text("It is not command, please check your command")
-                .chatId(receivedMessage.getChatId().toString())
+                .chatId(String.valueOf(messageDto.getChatId()))
                 .replyMarkup(backReplyKeyboardMarkup)
                 .build();
     }
 
-    public Message correctNotStandardCommands(Message receivedMessage) {
-        if (commands.containsValue(receivedMessage.getText())) {
+    public MessageDto correctNotStandardCommands(MessageDto messageDto) {
+        if (commands.containsValue(messageDto.getText())) {
             for (String key : commands.keySet()) {
-                if (commands.get(key).equals(receivedMessage.getText())) {
-                    receivedMessage.setText(key);
+                if (commands.get(key).equals(messageDto.getText())) {
+                    messageDto.setText(key);
                 }
             }
         }
-        ;
-        return receivedMessage;
+        return messageDto;
     }
 }

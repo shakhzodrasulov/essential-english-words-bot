@@ -12,6 +12,7 @@ public enum Emojiz {
     POINT_DOWN(":point_down:"),
     SUNGLASSES(":sunglasses:"),
     ARROW_LEFT(":arrow_left:"),
+    ENGLAND(":gb:"),
     BOSS(":sunglasses:"),
     CLIENT(":bust_in_silhouette:"),
     WRONG(":x:"),

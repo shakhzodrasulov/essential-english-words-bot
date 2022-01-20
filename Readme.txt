@@ -1,0 +1,1 @@
+Project start point: src/main/java/uz/rasulov/essentialenglishwordsbotv2/TelegramBot.java
