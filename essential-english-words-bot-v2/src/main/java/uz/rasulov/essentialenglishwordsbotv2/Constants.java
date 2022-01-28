@@ -25,7 +25,7 @@ public class Constants {
             sendMessage = new SendMessage();
         }
         sendMessage.setChatId(chatId);
-        sendMessage.setText("Your message is not command! /help");
+        sendMessage.setText();
         return sendMessage;
     }
 
