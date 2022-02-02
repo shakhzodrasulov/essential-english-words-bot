@@ -3,7 +3,7 @@ package uz.rasulov.eew_bot_v3.commands;
 import org.springframework.stereotype.Component;
 import uz.rasulov.eew_bot_v3.responses.MainMenuResponse;
 import uz.rasulov.eew_bot_v3.responses.Response;
-import uz.rasulov.eew_bot_v3.responses.StartResponse;
+import uz.rasulov.eew_bot_v3.service.Emojiz;
 
 import static uz.rasulov.eew_bot_v3.service.Constants.COMMANDS_LIST;
 
@@ -27,7 +27,7 @@ public class MainMenuCommand implements Command{
 
     @Override
     public String getTitle() {
-        return "Main Menu";
+        return Emojiz.ARROW_LEFT.getValue() + " Main Menu";
     }
 
     @Override

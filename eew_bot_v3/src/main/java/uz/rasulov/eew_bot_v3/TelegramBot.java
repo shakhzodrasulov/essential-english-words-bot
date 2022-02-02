@@ -9,8 +9,11 @@ import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import uz.rasulov.eew_bot_v3.commands.Command;
 import uz.rasulov.eew_bot_v3.commands.IsNotCommand;
 import uz.rasulov.eew_bot_v3.models.Message;
+import uz.rasulov.eew_bot_v3.scripts.Script;
 import uz.rasulov.eew_bot_v3.service.Constants;
 import uz.rasulov.eew_bot_v3.service.MainServiceImpl;
+
+import static uz.rasulov.eew_bot_v3.service.Constants.scriptIsRun;
 
 /**
  * Created by SHR on 27.01.2022
@@ -25,11 +28,15 @@ public class TelegramBot extends TelegramLongPollingBot {
 
     private final MainServiceImpl mainService;
     private final Command isNotCommand;
+    private final Script script;
 
-    public TelegramBot(MainServiceImpl mainService, IsNotCommand isNotCommand) {
+    public TelegramBot(MainServiceImpl mainService, IsNotCommand isNotCommand, Script script) {
         this.mainService = mainService;
         this.isNotCommand = isNotCommand;
+        this.script = script;
     }
+
+    private SendMessage response;
 
 
     @Override
@@ -45,7 +52,6 @@ public class TelegramBot extends TelegramLongPollingBot {
     @Override
     public void onUpdateReceived(Update update) {
         Message receivedMessage = mainService.getMessage(update);
-
         if (receivedMessage != null) {
 
             Command receivedCommand = Constants.COMMANDS_LIST.stream()
@@ -53,11 +59,17 @@ public class TelegramBot extends TelegramLongPollingBot {
                     .findFirst()
                     .orElse(isNotCommand);
 
-            SendMessage response = receivedCommand.getResponse().getSendMessage();
+            response = receivedCommand.getResponse().getSendMessage();
+
+            if (receivedMessage.getText().contains("unit") || scriptIsRun) {
+                response = script.run(receivedMessage);
+            }
+
             response.setChatId(receivedMessage.getChatId());
             send(response);
         }
     }
+
 
     //send answer to user
     private void send(SendMessage sendMessage) {

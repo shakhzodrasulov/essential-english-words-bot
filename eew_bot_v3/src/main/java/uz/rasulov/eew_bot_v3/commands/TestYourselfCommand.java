@@ -3,6 +3,7 @@ package uz.rasulov.eew_bot_v3.commands;
 import org.springframework.stereotype.Component;
 import uz.rasulov.eew_bot_v3.responses.Response;
 import uz.rasulov.eew_bot_v3.responses.TestYourselfResponse;
+import uz.rasulov.eew_bot_v3.service.Constants;
 import uz.rasulov.eew_bot_v3.service.Emojiz;
 
 import static uz.rasulov.eew_bot_v3.service.Constants.COMMANDS_LIST;
@@ -32,6 +33,7 @@ public class TestYourselfCommand implements Command {
 
     @Override
     public Response getResponse() {
+        Constants.scriptName = "test_yourself";
         return response;
     }
 }

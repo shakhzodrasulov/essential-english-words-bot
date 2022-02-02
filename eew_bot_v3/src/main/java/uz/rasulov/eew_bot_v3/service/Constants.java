@@ -10,4 +10,9 @@ import java.util.List;
  */
 public class Constants {
     public static List<Command> COMMANDS_LIST = new ArrayList<>();
+
+    //Script constants
+    public static String scriptName;
+    public static boolean scriptIsRun;
+    public static String selectedUnit;
 }
